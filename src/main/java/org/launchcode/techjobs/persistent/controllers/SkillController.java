@@ -31,13 +31,14 @@ public class SkillController {
     }
 
     @PostMapping("add")
-    public String processAddSkillForm(@ModelAttribute @Valid Skill newSkill, Errors errors, Model model){
+    public String processAddSkillForm(@ModelAttribute @Valid Skill skill, Errors errors, Model model){
+
         if(errors.hasErrors()) {
-            model.addAttribute(new Skill());
             return "skills/add";
         }
-        skillRepository.save(newSkill);
-        return "redirect:/skills/index";
+
+        skillRepository.save(skill);
+        return "redirect:/skills/";
     }
 
     @GetMapping("view/{skillId}")
@@ -47,7 +48,7 @@ public class SkillController {
         if(optSkill.isPresent()) {
             Skill skill = (Skill) optSkill.get();
             model.addAttribute("skill", skill);
-            return "skill/view";
+            return "skills/view";
 
         } else {
             return "redirect: ../";
