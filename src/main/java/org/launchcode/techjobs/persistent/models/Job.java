@@ -4,9 +4,6 @@ package org.launchcode.techjobs.persistent.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
-import org.launchcode.techjobs.persistent.models.data.JobRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +17,6 @@ public class Job extends AbstractEntity{
     @ManyToMany
     private List<Skill> skills = new ArrayList<>();
 
-    //adding skills to constructor might be an issues. Check later if there is one.
     public Job(Employer employer, List<Skill> skills) {
         this.employer = employer;
         this.skills = skills;
