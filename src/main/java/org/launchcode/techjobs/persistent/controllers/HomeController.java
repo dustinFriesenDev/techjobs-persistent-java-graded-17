@@ -52,15 +52,20 @@ public class HomeController {
                                        Errors errors, Model model, @RequestParam int employerId, @RequestParam(required = false) List<Integer> skills) {
         Optional<Employer> employerOjbs = employerRepository.findById(employerId);
 
-        if (errors.hasErrors() || skills==null) {
+        if (errors.hasErrors() || skills==null || employerId==0) {
 	        model.addAttribute("title", "Add Job");
             model.addAttribute("employers", employerRepository.findAll());
             model.addAttribute("skills", skillRepository.findAll());
+
+            if(skills==null){
+                model.addAttribute("skillError", "Please select a minimum of one skill");
+            }
+            if(employerId==0){
+                model.addAttribute("employerError", "Please select an employer");
+            }
             return "add";
         }
         List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
-
-
 
         if(employerOjbs.isPresent() && !skillObjs.isEmpty()){
             Employer employer = employerOjbs.get();
