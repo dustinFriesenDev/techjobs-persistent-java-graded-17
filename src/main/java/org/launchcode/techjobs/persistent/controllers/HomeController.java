@@ -1,7 +1,6 @@
 package org.launchcode.techjobs.persistent.controllers;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Skill;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,9 +50,11 @@ public class HomeController {
 
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                       Errors errors, Model model, @RequestParam int employerId, @RequestParam(required = false) @Valid List<Integer> skills) {
+                                       Errors errors, Model model, @RequestParam(required = false) int employerId, @RequestParam(required = false) @Valid List<Integer> skills) {
+
 
         Optional<Employer> employerOjbs = employerRepository.findById(employerId);
+
 
         if (errors.hasErrors() || employerId==0) {
 	        model.addAttribute("title", "Add Job");
@@ -60,7 +63,6 @@ public class HomeController {
             model.addAttribute("employerError", "Please select an employer");
             return "add";
         }
-
 
         List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
         newJob.setSkills(skillObjs);
