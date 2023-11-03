@@ -5,6 +5,7 @@ import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Skill;
 import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
+import org.launchcode.techjobs.persistent.models.data.JobComparator;
 import org.launchcode.techjobs.persistent.models.data.JobRepository;
 import org.launchcode.techjobs.persistent.models.data.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +34,10 @@ public class HomeController {
     //GOOD AND WORKING
     @RequestMapping("/")
     public String index(Model model) {
-
+        List<Job> jobs = (List<Job>) jobRepository.findAll();
+        Collections.sort(jobs, new JobComparator());
         model.addAttribute("title", "MyJobs");
-        model.addAttribute("jobs", jobRepository.findAll());
+        model.addAttribute("jobs", jobs);
 
         return "index";
     }
@@ -50,17 +53,14 @@ public class HomeController {
 
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                       Errors errors, Model model, @RequestParam(required = false) int employerId, @RequestParam(required = false) @Valid List<Integer> skills) {
-
+                                       Errors errors, Model model, @RequestParam int employerId, @RequestParam(required = false) @Valid List<Integer> skills) {
 
         Optional<Employer> employerOjbs = employerRepository.findById(employerId);
 
-
-        if (errors.hasErrors() || employerId==0) {
+        if (errors.hasErrors()) {
 	        model.addAttribute("title", "Add Job");
             model.addAttribute("employers", employerRepository.findAll());
             model.addAttribute("skills", skillRepository.findAll());
-            model.addAttribute("employerError", "Please select an employer");
             return "add";
         }
 
@@ -71,7 +71,6 @@ public class HomeController {
             Employer employer = employerOjbs.get();
             newJob.setEmployer(employer);
         }
-
         jobRepository.save(newJob);
 
         return "redirect:/";
