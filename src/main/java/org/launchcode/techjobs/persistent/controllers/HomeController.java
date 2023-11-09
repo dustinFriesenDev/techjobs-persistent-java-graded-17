@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Skill;
-import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
-import org.launchcode.techjobs.persistent.models.data.JobComparator;
-import org.launchcode.techjobs.persistent.models.data.JobRepository;
-import org.launchcode.techjobs.persistent.models.data.SkillRepository;
+import org.launchcode.techjobs.persistent.models.data.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,8 +42,10 @@ public class HomeController {
     @GetMapping("add")
     public String displayAddJobForm(Model model) {
 	model.addAttribute("title", "Add Job");
+        List<Employer> employers  = (List<Employer>) employerRepository.findAll();
+        Collections.sort(employers, new EmployerComparator());
         model.addAttribute(new Job());
-        model.addAttribute("employers", employerRepository.findAll());
+        model.addAttribute("employers", employers);
         model.addAttribute("skills", skillRepository.findAll());
         return "add";
     }
